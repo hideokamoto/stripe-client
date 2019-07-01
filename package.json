@@ -1,0 +1,83 @@
+{
+  "name": "stripe-client",
+  "version": "2.1.0",
+  "description": "utility functions for ask-sdk",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rollup -c",
+    "tsc": "tsc",
+    "test": "jest",
+    "lint": "eslint 'libs/**/*.{ts,tsx}'",
+    "doc": "typedoc --out docs libs/",
+    "postversion": "git push origin $(git describe --abbrev=0 --tags)",
+    "test:watch": "jest --watch",
+    "test:dev": "jest --watch --silent=false --verbose false --coverage"
+  },
+  "keywords": [
+    "alexa",
+    "ask-sdk",
+    "alexa-skill"
+  ],
+  "bugs": {
+    "url": "https://github.com/hideokamoto/stripe-client/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hideokamoto/stripe-client.git"
+  },
+  "author": "Hidetaka Okamoto <info@wp-kyoto.net> (https://wp-kyoto.net)",
+  "license": "MIT",
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "ts-jest"
+    },
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "tsconfig.json"
+      }
+    },
+    "testMatch": [
+      "**/__tests__/*/*.+(ts|tsx|js)"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.15",
+    "@types/node": "^12.0.10",
+    "@types/stripe": "^6.30.5",
+    "@typescript-eslint/eslint-plugin": "^1.11.0",
+    "@typescript-eslint/parser": "^1.11.0",
+    "@typescript-eslint/typescript-estree": "^1.11.0",
+    "eslint": "^6.0.1",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "husky": "^2.7.0",
+    "jest": "^24.8.0",
+    "lint-staged": "^8.2.1",
+    "rollup": "^1.16.3",
+    "rollup-plugin-typescript2": "^0.21.2",
+    "stripe": "^7.4.0",
+    "ts-jest": "^24.0.2",
+    "tslib": "^1.10.0",
+    "typedoc": "^0.14.2",
+    "typescript": "^3.5.2"
+  }
+}
