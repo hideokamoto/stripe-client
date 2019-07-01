@@ -1,5 +1,11 @@
 # Stripe SDK Clinet for Node.js
 
+https://www.npmjs.com/package/@hideokamoto/stripe-client
+
+```bash
+$ yarn add @hideokamoto/stripe-client
+```
+
 ## Getting started
 
 ```bash
