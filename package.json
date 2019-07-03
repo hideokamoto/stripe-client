@@ -14,9 +14,7 @@
     "test:dev": "jest --watch --silent=false --verbose false --coverage"
   },
   "keywords": [
-    "alexa",
-    "ask-sdk",
-    "alexa-skill"
+    "stripe"
   ],
   "bugs": {
     "url": "https://github.com/hideokamoto/stripe-client/issues"
