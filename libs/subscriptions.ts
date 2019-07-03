@@ -156,23 +156,27 @@ export class SubscriptionClient extends ClientBase {
      * @param subscriptionId {string}
      * @param key {string}
      * @param value {string}
+     * @param [string] customerId
      * @returns Promise<void>
      */
-    public async updateMetadata (subscriptionId: string, key: string, value: string): Promise<void> {
-        await this.updateMetadatas(subscriptionId, { [key]: value })
+    public async updateMetadata (subscriptionId: string, key: string, value: string, customerId?: string): Promise<void> {
+        await this.updateMetadatas(subscriptionId, { [key]: value }, customerId)
     }
     /**
      * Subscriptionのmetadataだけ更新する(複数)
+     * customerIdをつけると一致した場合のみ処理する
      * できるだけどんな値があるか把握しやすくするため、updateSiteIdのようにラッパーを作ってください
      *
      * @access public
-     * @param subscriptionId {string}
-     * @param data {Stripe.IMetadata}
+     * @param {string} subscriptionId
+     * @param {Stripe.IMetadata} data
+     * @param [string] customerId
      * @returns Promise<void>
      */
-    public async updateMetadatas (subscriptionId: string, data: IMetadata): Promise<void> {
+    public async updateMetadatas (subscriptionId: string, data: IMetadata, customerId?: string): Promise<void> {
         const subscription = await this.getSubscriptionById(subscriptionId)
         if (!subscription) throw new Error(`no such subscription: ${subscriptionId}`)
+        if (customerId && subscription.customer !== customerId) throw new Error(`no such subscription: ${subscriptionId}`)
         const metadata = subscription.metadata || {}
         const param = {
             metadata: {
