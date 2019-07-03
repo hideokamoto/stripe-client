@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { subscriptionItems, invoices, subscriptions } from 'stripe'
+import { subscriptionItems, invoices, subscriptions, IMetadata } from 'stripe'
 import ClientBase from './base'
 export class SubscriptionClient extends ClientBase {
     /**
@@ -147,6 +147,40 @@ export class SubscriptionClient extends ClientBase {
                 id: subscriptionId
             }
         }
+    }
+    /**
+     * Subscriptionのmetadataだけ更新する
+     * できるだけどんな値があるか把握しやすくするため、updateSiteIdのようにラッパーを作ってください
+     *
+     * @access public
+     * @param subscriptionId {string}
+     * @param key {string}
+     * @param value {string}
+     * @returns Promise<void>
+     */
+    public async updateMetadata (subscriptionId: string, key: string, value: string): Promise<void> {
+        await this.updateMetadatas(subscriptionId, { [key]: value })
+    }
+    /**
+     * Subscriptionのmetadataだけ更新する(複数)
+     * できるだけどんな値があるか把握しやすくするため、updateSiteIdのようにラッパーを作ってください
+     *
+     * @access public
+     * @param subscriptionId {string}
+     * @param data {Stripe.IMetadata}
+     * @returns Promise<void>
+     */
+    public async updateMetadatas (subscriptionId: string, data: IMetadata): Promise<void> {
+        const subscription = await this.getSubscriptionById(subscriptionId)
+        if (!subscription) throw new Error(`no such subscription: ${subscriptionId}`)
+        const metadata = subscription.metadata || {}
+        const param = {
+            metadata: {
+                ...metadata,
+                ...data
+            }
+        }
+        await this.updateSubscription(subscriptionId, param)
     }
 }
 export default SubscriptionClient
