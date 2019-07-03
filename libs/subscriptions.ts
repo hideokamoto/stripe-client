@@ -97,14 +97,22 @@ export class SubscriptionClient extends ClientBase {
         }
         return this.create({ ...param, ...options })
     }
+    private async validateSubscription (subscriptionId: string, customerId?: string) {
+        const subscription = await this.getSubscriptionById(subscriptionId)
+        if (!subscription) throw new Error(`no such subscription: ${subscriptionId}`)
+        if (customerId && subscription.customer !== customerId) throw new Error(`no such subscription: ${subscriptionId}`)
+        return subscription
+    }
     /**
      * @param {string} subscriptionId
      * @param {subscriptions.ISubscriptionUpdateOptions} options
      */
-    public async updateSubscription (subscriptionId: string, options: Partial<subscriptions.ISubscriptionUpdateOptions>) {
+    public async updateSubscription (subscriptionId: string, options: Partial<subscriptions.ISubscriptionUpdateOptions>, customerId?: string) {
+        await this.validateSubscription(subscriptionId, customerId)
         return this.update(subscriptionId, options)
     }
-    public async deleteSubscription (subscriptionId: string, options: Partial<subscriptions.ISubscriptionCancellationOptions>) {
+    public async deleteSubscription (subscriptionId: string, options: Partial<subscriptions.ISubscriptionCancellationOptions>, customerId?: string) {
+        await this.validateSubscription(subscriptionId, customerId)
         return this.del(subscriptionId, options)
     }
     /**
@@ -174,9 +182,7 @@ export class SubscriptionClient extends ClientBase {
      * @returns Promise<void>
      */
     public async updateMetadatas (subscriptionId: string, data: IMetadata, customerId?: string): Promise<void> {
-        const subscription = await this.getSubscriptionById(subscriptionId)
-        if (!subscription) throw new Error(`no such subscription: ${subscriptionId}`)
-        if (customerId && subscription.customer !== customerId) throw new Error(`no such subscription: ${subscriptionId}`)
+        const subscription = await this.validateSubscription(subscriptionId, customerId)
         const metadata = subscription.metadata || {}
         const param = {
             metadata: {
