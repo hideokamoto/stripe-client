@@ -97,7 +97,7 @@ export class SubscriptionClient extends ClientBase {
         }
         return this.create({ ...param, ...options })
     }
-    private async validateSubscription (subscriptionId: string, customerId?: string) {
+    protected async validateSubscription (subscriptionId: string, customerId?: string) {
         const subscription = await this.getSubscriptionById(subscriptionId)
         if (!subscription) throw new Error(`no such subscription: ${subscriptionId}`)
         if (customerId && subscription.customer !== customerId) throw new Error(`no such subscription: ${subscriptionId}`)
