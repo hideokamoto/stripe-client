@@ -1,6 +1,6 @@
 {
   "name": "@hideokamoto/stripe-client",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "utility functions for ask-sdk",
   "main": "dist/index.js",
   "scripts": {
