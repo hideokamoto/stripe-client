@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { subscriptionItems, invoices, subscriptions, IMetadata } from 'stripe'
+import { subscriptionItems, invoices, subscriptions, IMetadata, plans } from 'stripe'
 import ClientBase from './base'
 export class SubscriptionClient extends ClientBase {
     /**
@@ -9,6 +9,12 @@ export class SubscriptionClient extends ClientBase {
     public getTaxRate (planId: string): number {
         if (!planId) return 0
         return 0
+    }
+    protected async retrieve (subscriptionId: string) {
+        if (this.isDebug || this.stage === 'test') console.log('stripe.subscription.retrive: %j', subscriptionId)
+        const result = await this.client.subscriptions.retrieve(subscriptionId)
+        if (this.isDebug || this.stage === 'test') console.log('stripe.subscription.retrive: %j', result)
+        return result
     }
     protected async list (params: subscriptions.ISubscriptionListOptions) {
         if (this.isDebug || this.stage === 'test') console.log('stripe.subscription.list: %j', params)
@@ -191,6 +197,48 @@ export class SubscriptionClient extends ClientBase {
             }
         }
         await this.updateSubscription(subscriptionId, param)
+    }
+    /**
+     * List subscriptions by the subscribed plan's interval
+     * @param {string} customerId
+     * @param {Stripe.plans.IntervalUnit} interval
+     * @example
+     * ```
+     * const listSubscriptionByInterval('cus_XXXX', 'month')
+     * const listSubscriptionByInterval('cus_XXXX', 'year')
+     * ```
+     */
+    public async listSubscriptionByInterval (customerId: string, interval: plans.IntervalUnit) {
+        const { data } = await this.list({
+            customer: customerId,
+            status: 'active'
+        })
+        const subscriptions = data.filter(s => {
+            const { plan } = s.items.data[0]
+            return plan.interval === interval
+        })
+        return subscriptions
+    }
+    /**
+     * Get subscription by the subscribed plan's interval
+     * @param {string} customerId
+     * @param {Stripe.plans.IntervalUnit} interval
+     * @example
+     * ```
+     * const getSubscriptionByInterval('cus_XXXX', 'month')
+     * const getSubscriptionByInterval('cus_XXXX', 'year')
+     * ```
+     */
+    public async getSubscriptionByInterval (customerId: string, interval: plans.IntervalUnit) {
+        const { data } = await this.list({
+            customer: customerId,
+            status: 'active'
+        })
+        const subscription = data.find(s => {
+            const { plan } = s.items.data[0]
+            return plan.interval === interval
+        })
+        return subscription
     }
 }
 export default SubscriptionClient
