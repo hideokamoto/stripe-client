@@ -14,6 +14,7 @@ export * from './base'
 export * from './plan'
 export * from './subscriptions'
 export * from './usageRecord'
+export * from './utils/index'
 
 export class StripeClient {
     protected client: Stripe
