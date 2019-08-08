@@ -22,7 +22,7 @@ export class SubscriptionClient extends ClientBase {
         if (this.isDebug || this.stage === 'test') console.log('stripe.subscription.list: %j', result)
         return result
     }
-    protected async del (subscriptionId: string, params: subscriptions.ISubscriptionCancellationOptions) {
+    protected async del (subscriptionId: string, params: subscriptions.ISubscriptionCancellationOptions = {}) {
         if (this.isDebug || this.stage === 'test') console.log('stripe.subscription.del: %j', { subscriptionId, params })
         const result = await this.client.subscriptions.del(subscriptionId, params)
         if (this.isDebug || this.stage === 'test') console.log('stripe.subscription.del: %j', result)
