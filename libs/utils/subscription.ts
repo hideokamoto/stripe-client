@@ -32,6 +32,7 @@ export const createUpdateSubscriptionOptions = (subscriptionItemId: string, plan
                 }]
             }
         }
+        const targetQuantity = targetItem.quantity || 1
         return {
             items: [{
                 id: subscriptionItemId,
@@ -39,31 +40,33 @@ export const createUpdateSubscriptionOptions = (subscriptionItemId: string, plan
             }, {
                 id: targetItem.id,
                 plan: nextPlanId,
-                quantity: targetItem.quantity + 1
+                quantity: targetQuantity + 1
             }]
         }
     }
+    const itemQuantity = item.quantity || 1
     if (!targetItem) {
         return {
             items: [{
                 id: subscriptionItemId,
                 plan: currentPlanId,
-                quantity: item.quantity - 1
+                quantity: itemQuantity - 1
             }, {
                 plan: nextPlanId,
                 quantity: 1
             }]
         }
     }
+    const targetQuantity = targetItem.quantity || 1
     return {
         items: [{
             id: subscriptionItemId,
             plan: currentPlanId,
-            quantity: item.quantity - 1
+            quantity: itemQuantity - 1
         }, {
             id: targetItem.id,
             plan: nextPlanId,
-            quantity: targetItem.quantity + 1
+            quantity: targetQuantity + 1
         }]
     }
 }

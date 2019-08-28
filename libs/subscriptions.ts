@@ -220,6 +220,27 @@ export class SubscriptionClient extends ClientBase {
         return subscriptions
     }
     /**
+     * List subscriptions by the subscribed plan's interval
+     * @param {string} customerId
+     * @param {Stripe.plans.IntervalUnit} interval
+     * @example
+     * ```
+     * const listSubscriptionsByInterval('cus_XXXX', 'month')
+     * const listSubscriptionsByInterval('cus_XXXX', 'year')
+     * ```
+     */
+    public async listSubscriptionsByInterval (customerId: string, interval: plans.IntervalUnit): Promise<subscriptions.ISubscription[]> {
+        const { data } = await this.list({
+            customer: customerId,
+            status: 'active'
+        })
+        const subscriptions = data.filter(s => {
+            const { plan } = s.items.data[0]
+            return plan.interval === interval
+        })
+        return subscriptions
+    }
+    /**
      * Get subscription by the subscribed plan's interval
      * @param {string} customerId
      * @param {Stripe.plans.IntervalUnit} interval
@@ -229,7 +250,7 @@ export class SubscriptionClient extends ClientBase {
      * const getSubscriptionByInterval('cus_XXXX', 'year')
      * ```
      */
-    public async getSubscriptionByInterval (customerId: string, interval: plans.IntervalUnit) {
+    public async getSubscriptionByInterval (customerId: string, interval: plans.IntervalUnit): Promise<subscriptions.ISubscription | null> {
         const { data } = await this.list({
             customer: customerId,
             status: 'active'
@@ -238,6 +259,7 @@ export class SubscriptionClient extends ClientBase {
             const { plan } = s.items.data[0]
             return plan.interval === interval
         })
+        if (!subscription) return null
         return subscription
     }
 }
