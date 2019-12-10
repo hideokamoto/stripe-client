@@ -1,4 +1,5 @@
 import Stripe from 'stripe'
+import { Agent } from 'http'
 import {
     Stage
 } from './model'
@@ -16,6 +17,27 @@ export * from './subscriptions'
 export * from './usageRecord'
 export * from './utils/index'
 
+/**
+ * Ref: https://github.com/stripe/stripe-node/blob/master/lib/stripe.js#L30
+ */
+export interface StripeAllowedConfig {
+    apiVersion: string;
+    maxNetworkRetries: number;
+    httpAgent: Agent;
+    timeout: number;
+    host: string;
+    port: string | number;
+    telemetry: boolean;
+}
+export interface ClientConfig extends Partial<StripeAllowedConfig> {
+    stage?: Stage;
+    debugMode?: 'enabled' | 'disabled';
+}
+export const defaultClientConfig: ClientConfig = {
+    stage: 'test',
+    debugMode: 'disabled',
+    maxNetworkRetries: 2
+}
 export class StripeClient {
     protected client: Stripe
     public customers: CustomerClient
@@ -24,7 +46,22 @@ export class StripeClient {
     public usageRecords: UsageRecordClient
     protected stage: Stage
     protected isDebug: boolean
-    public constructor (apiKey: string, stage: Stage = 'test', isDebug: boolean = false, client: Stripe = new Stripe(apiKey)) {
+    public constructor (apiKey: string, config: ClientConfig = defaultClientConfig, client: Stripe = new Stripe(apiKey)) {
+        const conf = {
+            ...defaultClientConfig,
+            ...config
+        }
+        const stage = conf.stage || 'test'
+        const isDebug = conf.debugMode === 'enabled'
+
+        if (conf.apiVersion) client.setApiVersion(conf.apiVersion)
+        if (conf.maxNetworkRetries) client.setMaxNetworkRetries(conf.maxNetworkRetries)
+        if (conf.httpAgent) client.setHttpAgent(conf.httpAgent)
+        if (conf.timeout) client.setTimeout(conf.timeout)
+        if (conf.host) client.setHost(conf.host)
+        if (conf.port) client.setPort(conf.port)
+        if (conf.telemetry) client.setTelemetryEnabled(conf.telemetry)
+
         this.client = client
         this.stage = stage
         this.isDebug = isDebug
