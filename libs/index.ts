@@ -24,7 +24,7 @@ export class StripeClient {
     public usageRecords: UsageRecordClient
     protected stage: Stage
     protected isDebug: boolean
-    public constructor (apiKey: string, stage: Stage = 'test', isDebug: boolean = false, client: Stripe = new Stripe(apiKey)) {
+    public constructor (apiKey: string, maxNetworkRetries: number = 2, stage: Stage = 'test', isDebug: boolean = false, client: Stripe = new Stripe(apiKey)) {
         this.client = client
         this.stage = stage
         this.isDebug = isDebug
@@ -32,6 +32,7 @@ export class StripeClient {
         this.products = new ProductClient(this.client, stage, isDebug)
         this.subscriptions = new SubscriptionClient(this.client, stage, isDebug)
         this.usageRecords = new UsageRecordClient(this.client, stage, isDebug)
+        this.client.setMaxNetworkRetries(maxNetworkRetries)
     }
     public getClient () {
         return this.client
