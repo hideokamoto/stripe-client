@@ -21,7 +21,7 @@
     "noEmitHelpers": true,
     "importHelpers": true,
     "moduleResolution": "node",
-    "esModuleInterop": true
+    "esModuleInterop": false
   },
   "include": [
     "libs/"

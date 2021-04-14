@@ -1,4 +1,4 @@
-import Stripe from 'stripe'
+import * as Stripe from 'stripe'
 import {
     Stage
 } from './model'
